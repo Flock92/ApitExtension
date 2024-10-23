@@ -1,0 +1,42 @@
+{
+    "name": "Apit212",
+    "version": "1.0",
+    "description": "Monitor your trades in any tab",
+    "manifest_version": 3,
+
+    "permissions": [
+        "sidePanel",
+        "scripting",
+        "tabs",
+        "storage"
+    ],
+
+    "side_panel": {
+        "default_path": "content/sidePanel.html"
+    },
+
+    "action": {
+        "default_icon": {
+            "16": "content/icons/icon16.png",
+            "24": "content/icons/icon24.png",
+            "128": "content/icons/icon128.png"
+        },
+
+        "default_title": "Apit212"
+    },
+
+    "background": {
+        "script": [
+            "content/sidePanel.js"
+        ],
+        "background": "content/background.js"
+    },
+
+    "content_scripts": [
+        {
+            "matches": ["https://app.trading212.com/*"],
+            "js": ["content/contentScript.js"]
+        }
+    ]
+    
+}
