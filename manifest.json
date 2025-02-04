@@ -1,42 +1,43 @@
 {
-    "name": "Apit212",
+    "name": "ApitConnect",
     "version": "1.0",
-    "description": "Monitor your trades in any tab",
+    "description": "Use Python to interact with thr trading platform",
     "manifest_version": 3,
 
-    "permissions": [
-        "sidePanel",
+    "permissions" : [
         "scripting",
         "tabs",
-        "storage"
+        "storage",
+        "activeTab",
+        "webNavigation"
     ],
 
-    "side_panel": {
-        "default_path": "content/sidePanel.html"
+    "options_ui": {
+    "page": "./content/sidePanel.html",
+    "open_in_tab": false
     },
 
     "action": {
+        "default_popup": "./content/popup.html",
         "default_icon": {
-            "16": "content/icons/icon16.png",
-            "24": "content/icons/icon24.png",
-            "128": "content/icons/icon128.png"
+
         },
 
-        "default_title": "Apit212"
+        "default_title": "ApitConnect"
     },
 
     "background": {
+        "type": "module",
+        "service_worker": "./content/scripts/background.js",
         "script": [
-            "content/sidePanel.js"
-        ],
-        "background": "content/background.js"
+            "./content/scripts/popup.js"
+        ]
     },
 
     "content_scripts": [
         {
             "matches": ["https://app.trading212.com/*"],
-            "js": ["content/contentScript.js"]
+            "js": ["./content/scripts/content.js", "./content/scripts/popup.js"]
         }
     ]
-    
 }
