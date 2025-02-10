@@ -3,6 +3,44 @@ let ws = null;
 let isConnected = false;  // Track connection status
 const targetUrl = 'https://app.trading212.com/';
 
+// insure content script is active
+chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
+    console.log("webnavigation")
+    console.log(details)
+    console.log("loading script")
+    
+    // Query for tabs that match the target URL
+    chrome.tabs.query({url: targetUrl}, function(tabs) {
+        if (tabs[0]) {  // Ensure there is a tab with the target URL
+            const tabId = tabs[0].id;
+
+            // Inject a check to verify if the content script is already running
+            chrome.scripting.executeScript({
+                target: { tabId: tabId },
+                func: checkIfScriptIsRunning
+            }, (result) => {
+                // `result` will contain the return value of the function executed in the page context.
+                if (result && result[0].result === false) {
+                    // If content script is not running, inject it
+                    chrome.scripting.executeScript({
+                        target: { tabId: tabId },
+                        files: ["./content/scripts/content.js"]
+                    });
+                } else {
+                    console.log("Content script already running on the page.");
+                }
+            });
+        }
+    });
+});
+
+
+// Function to check if the content script is already running
+function checkIfScriptIsRunning() {
+    return window.contentScriptInjected || false;  // Return true if content script is injected, false otherwise
+}
+
+
 // Store WebSocket state (host and port) in local storage for persistence
 chrome.runtime.onInstalled.addListener(() => {
     const savedHost = localStorage.getItem('host');
@@ -80,4 +118,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.type === 'contentReponse') {
         console.log(request.data)
     }
+
+
 });
