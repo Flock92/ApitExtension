@@ -101,23 +101,6 @@ chrome.runtime.onMessage.addListener((message) => {
     }
 });
 
-// Order submission handler
-document.getElementById("submitOrder").addEventListener("click", function () {
-    const orderType = document.getElementById("orderType").value;
-    const tickerSymbol = document.getElementById("tickerSymbol").value;
-    const targetPrice = document.getElementById("targetPrice").value;
-    const stopLoss = document.getElementById("stopLoss").value;
-    const takeProfit = document.getElementById("takeProfit").value;
-    const orderSize = document.getElementById("orderSize").value;
-
-    if (tickerSymbol && targetPrice && stopLoss && takeProfit && orderSize) {
-        // Send the order data to the server (Example: Send WebSocket message here)
-        addOrderToList(orderType, tickerSymbol, targetPrice, stopLoss, takeProfit, orderSize);
-    } else {
-        alert("Please fill all order fields.");
-    }
-});
-
 // Add order to the list
 function addOrderToList(orderType, tickerSymbol, targetPrice, stopLoss, takeProfit, orderSize) {
     const orderItem = document.createElement("div");
@@ -143,4 +126,109 @@ document.getElementById("closeAllOrders").addEventListener("click", function () 
 freeFunds.textContent = "$10000";  // Example value
 blockedFunds.textContent = "$2000";  // Example value
 result.textContent = "$150";  // Example value
-totalFunds.textContent = "$30000"; 
+totalFunds.textContent = "$30000"; // Example value
+
+
+// QUICK ORDER FUNCTIONS
+
+// Listen for Quick Order Submission
+document.getElementById("submitQuickOrder").addEventListener("click", function () {
+    const orderType = document.getElementById("quickOrderType").value;
+    const tickerSymbol = document.getElementById("quickTickerSymbol").value;
+    const targetPrice = document.getElementById("quickTargetPrice").value;
+    const stopLoss = document.getElementById("quickStopLoss").value;
+    const takeProfit = document.getElementById("quickTakeProfit").value;
+    const orderSize = document.getElementById("quickOrderSize").value;
+    const slippage = document.getElementById("quickSlippage").value;
+
+    // Validate inputs
+    if (tickerSymbol && orderType && targetPrice && stopLoss && takeProfit && orderSize && slippage) {
+        // Add order to quick orders list
+        addQuickOrderToList(tickerSymbol, orderType, targetPrice, stopLoss, takeProfit, orderSize, slippage);
+    } else {
+        alert("Please fill all fields.");
+    }
+});
+
+// Add Quick Order to the List
+function addQuickOrderToList(tickerSymbol, orderType, targetPrice, stopLoss, takeProfit, orderSize, slippage) {
+    const quickOrderItem = document.createElement("div");
+    quickOrderItem.classList.add("order-item");
+
+    // Create the order button with details
+    quickOrderItem.innerHTML = `
+        <span>${tickerSymbol} - ${orderSize} @ ${targetPrice} (SL: ${stopLoss}, TP: ${takeProfit}, Slippage: ${slippage}%)</span>
+        <button onclick="sendQuickOrderMessage('${tickerSymbol}', ${targetPrice}, ${stopLoss}, ${takeProfit}, ${orderSize}, ${slippage})">Send Order</button>
+    `;
+    
+    // Create the order button with details
+    /*quickOrderItem.innerHTML = `
+        <span>${tickerSymbol} - ${orderSize} @ ${targetPrice} (SL: ${stopLoss}, TP: ${takeProfit}, Slippage: ${slippage}%)</span>
+        <button onclick="sendQuickOrderMessage('${tickerSymbol}', ${targetPrice}, ${stopLoss}, ${takeProfit}, ${orderSize}, ${slippage})">Send Order</button>
+    `;*/
+    document.getElementById("quick-orders-list").appendChild(quickOrderItem);
+}
+
+// Send Message to content.js when order button is clicked
+function sendQuickOrderMessage(tickerSymbol, targetPrice, stopLoss, takeProfit, orderSize, slippage) {
+    const orderData = {
+        tickerSymbol,
+        targetPrice,
+        stopLoss,
+        takeProfit,
+        orderSize,
+        slippage
+    };
+    console.log("submitting order")
+    // Send WebSocket or message to content.js
+    chrome.runtime.sendMessage({ type: 'quickOrder', orderData }, function(response) {
+        console.log("Order sent:", response);
+    });
+}
+
+// Remove Quick Order from the List
+function removeQuickOrder(button) {
+    button.parentElement.remove();
+}
+
+// View python connection settings
+document.getElementById("connectionFormHeader").addEventListener("click", function () {
+    toggleVisibility("connectionForm");
+});
+
+// View Quick Order Form
+document.getElementById("quickOrderFormHeader").addEventListener("click", function () {
+    toggleVisibility("quickOrderForm");
+});
+
+// View Quick Order List
+document.getElementById("quickOrdersListHeader").addEventListener("click", function () {
+    toggleVisibility("quickOrdersList");
+});
+
+// View order form
+document.getElementById("orderFormHeader").addEventListener("click", function () {
+    toggleVisibility("orderForm");
+});
+
+// View order list
+document.getElementById("ordersListHeader").addEventListener("click", function () {
+    toggleVisibility("ordersList");
+});
+
+// View portfolio data
+document.getElementById("portfolioHeader").addEventListener("click", function () {
+    toggleVisibility("portfolioInfo");
+});
+
+// collapse function
+function toggleVisibility(id) {
+    console.log("running toggle")
+    var content = document.getElementById(id);
+    if (content.style.display === "none" || content.style.display === "") {
+        content.style.display = "block";
+    } else {
+        content.style.display = "none";
+    }
+}
+
