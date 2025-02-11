@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,19 +9,17 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 10px;
-            /* width: 350px; /* Fixed width for the side panel */
-            /* height: 100vh;
-            position: fixed; */
             top: 0;
             right: 0;
             background-color: #f9f9f9;
             border-left: 2px solid #ccc;
             box-shadow: -2px 0 5px rgba(0,0,0,0.1);
-            overflow-y: auto; /* Allows scrolling if content exceeds panel height */
+            overflow-y: auto;
         }
         h2, h3 {
             font-size: 18px;
             margin-bottom: 10px;
+            cursor: pointer;
         }
         input, button, select {
             width: 100%;
@@ -30,12 +27,17 @@
             margin: 5px 0;
             box-sizing: border-box;
         }
-        #info-box, #orders-list, #portfolio-info {
-            margin-top: 15px;
-            padding: 10px;
+        .collapsible {
             background-color: #f0f0f0;
             border: 1px solid #ccc;
-            border-radius: 5px;
+            padding-top: 1px;
+            padding-left: 5px;
+            padding-right: 5px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .collapsible-content {
+            display: none;
         }
         .order-item {
             display: flex;
@@ -63,39 +65,80 @@
     <p>Connect to Python WebSocket Server</p>
 
     <!-- Connection Form -->
-    <input type="text" id="hostInput" placeholder="Enter host (e.g., localhost)">
-    <input type="number" id="portInput" placeholder="Enter port (e.g., 8765)">
-    <button id="connectButton">Connect</button>
+    <div class="collapsible">
+        <h3 id="connectionFormHeader">Connection Form</h3>
+        <div id="connectionForm" class="collapsible-content">
+            <input type="text" id="hostInput" placeholder="Enter host (e.g., localhost)">
+            <input type="number" id="portInput" placeholder="Enter port (e.g., 8765)">
+            <button id="connectButton">Connect</button>
+        </div>
+    </div>
 
     <div id="info-box">
         <p id="info-text"></p>
     </div>
 
+    <!-- Quick Order Form -->
+    <div class="collapsible">
+        <h3 id="quickOrderFormHeader">Create Quick Order</h3>
+        <div id="quickOrderForm" class="collapsible-content">
+            <select id="quickOrderType">
+                <option value="buy">Buy</option>
+                <option value="sell">Sell</option>
+            </select>
+            <input type="text" id="quickTickerSymbol" placeholder="Ticker Symbol">
+            <input type="number" id="quickTargetPrice" placeholder="Target Price">
+            <input type="number" id="quickStopLoss" placeholder="Stop Loss">
+            <input type="number" id="quickTakeProfit" placeholder="Take Profit">
+            <input type="number" id="quickOrderSize" placeholder="Order Size">
+            <input type="number" id="quickSlippage" placeholder="Slippage Percentage">
+            <button id="submitQuickOrder">Create Quick Order</button>
+        </div>
+    </div>
+
+    <!-- Quick Orders List -->
+    <div class="collapsible">
+        <h3 id="quickOrdersListHeader">Quick Orders</h3>
+        <div id="quickOrdersList" class="collapsible-content">
+            <div id="quick-orders-list"></div>
+        </div>
+    </div>
+
     <!-- Order Form -->
-    <h3>Place Order</h3>
-    <select id="orderType">
-        <option value="buy">Buy</option>
-        <option value="sell">Sell</option>
-    </select>
-    <input type="text" id="tickerSymbol" placeholder="Ticker Symbol">
-    <input type="number" id="targetPrice" placeholder="Target Price">
-    <input type="number" id="stopLoss" placeholder="Stop Loss">
-    <input type="number" id="takeProfit" placeholder="Take Profit">
-    <input type="number" id="orderSize" placeholder="Order Size">
-    <button id="submitOrder">Submit Order</button>
+    <div class="collapsible">
+        <h3 id="orderFormHeader">Place Order</h3>
+        <div id="orderForm" class="collapsible-content">
+            <select id="orderType">
+                <option value="buy">Buy</option>
+                <option value="sell">Sell</option>
+            </select>
+            <input type="text" id="tickerSymbol" placeholder="Ticker Symbol">
+            <input type="number" id="targetPrice" placeholder="Target Price">
+            <input type="number" id="stopLoss" placeholder="Stop Loss">
+            <input type="number" id="takeProfit" placeholder="Take Profit">
+            <input type="number" id="orderSize" placeholder="Order Size">
+            <button id="submitOrder">Submit Order</button>
+        </div>
+    </div>
 
     <!-- Orders List -->
-    <h3>Active Orders</h3>
-    <div id="orders-list"></div>
-    <button id="closeAllOrders">Close All Orders</button>
+    <div class="collapsible">
+        <h3 id="ordersListHeader">Active Orders</h3>
+        <div id="ordersList" class="collapsible-content">
+            <div id="orders-list"></div>
+            <button id="closeAllOrders">Close All Orders</button>
+        </div>
+    </div>
 
     <!-- Portfolio Info -->
-    <h3>Portfolio Info</h3>
-    <div id="portfolio-info">
-        <div class="portfolio-item">Free Funds: <span id="freeFunds">$0</span></div>
-        <div class="portfolio-item">Blocked Funds: <span id="blockedFunds">$0</span></div>
-        <div class="portfolio-item">Result: <span id="result">$0</span></div>
-        <div class="portfolio-item">Total: <span id="totalFunds">$0</span></div>
+    <div class="collapsible">
+        <h3 id="portfolioHeader">Portfolio Info</h3>
+        <div id="portfolioInfo" class="collapsible-content">
+            <div class="portfolio-item">Free Funds: <span id="freeFunds">$0</span></div>
+            <div class="portfolio-item">Blocked Funds: <span id="blockedFunds">$0</span></div>
+            <div class="portfolio-item">Result: <span id="result">$0</span></div>
+            <div class="portfolio-item">Total: <span id="totalFunds">$0</span></div>
+        </div>
     </div>
 
     <script src="./scripts/sidePanel.js"></script>
